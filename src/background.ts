@@ -1,7 +1,6 @@
 import { OpenAIClient, type OpenAIResponse, type PostData } from './api';
 
 let savedMessage: PostData | null = null;
-let analyzedData: OpenAIResponse | null = null;
 
 // エラーメッセージをフォーマットする関数
 function formatError(error: any): string {
@@ -13,38 +12,51 @@ function formatError(error: any): string {
 
 // content script からのメッセージを受け取る
 chrome.runtime.onMessage.addListener(async (message: PostData, sender, sendResponse) => {
-    try {
-        const { openaiApiKey } = await chrome.storage.sync.get(['openaiApiKey']);
-        if (!openaiApiKey) {
-            throw new Error('OpenAI API key is not set. Please configure it in the extension options.');
-        }
-
-        const client = new OpenAIClient(openaiApiKey);
-        analyzedData = await client.analyze(message.text);
-        savedMessage = message;
-        chrome.action.openPopup?.();
-    } catch (error) {
-        console.error('Error processing message:', error);
-        const errorMessage = formatError(error);
-        analyzedData = {
-            dates: [],
-            summary: `Error: ${errorMessage}. Please check the console for more details.`
-        };
-    }
+    savedMessage = message;
+    chrome.action.openPopup?.();
     return true;
 });
 
 // popup からのメッセージを受け取る
 chrome.runtime.onConnect.addListener((port) => {
     if (port.name === 'popup') {
-        // popup が接続されたら保存していたメッセージとその分析結果を送信
-        if (savedMessage && analyzedData) {
+        // 初期表示時に元の投稿内容を送信
+        if (savedMessage) {
             port.postMessage({
-                originalText: savedMessage.text,
-                analysis: analyzedData
+                type: 'initial',
+                text: savedMessage.text
             });
-            savedMessage = null;
-            analyzedData = null;
         }
+
+        // ポップアップからの分析リクエストを処理
+        port.onMessage.addListener(async (message) => {
+            if (message.type === 'analyze' && savedMessage) {
+                try {
+                    const { openaiApiKey } = await chrome.storage.sync.get(['openaiApiKey']);
+                    if (!openaiApiKey) {
+                        throw new Error('OpenAI API key is not set. Please configure it in the extension options.');
+                    }
+
+                    const client = new OpenAIClient(openaiApiKey);
+                    const analyzedData = await client.analyze(savedMessage.text);
+                    port.postMessage({
+                        type: 'analysis',
+                        result: analyzedData
+                    });
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                    const errorMessage = formatError(error);
+                    port.postMessage({
+                        type: 'error',
+                        error: `Error: ${errorMessage}. Please check the console for more details.`
+                    });
+                }
+            }
+        });
+
+        // ポップアップが閉じられたときにメッセージをクリア
+        port.onDisconnect.addListener(() => {
+            savedMessage = null;
+        });
     }
 });

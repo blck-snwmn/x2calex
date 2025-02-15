@@ -40,10 +40,26 @@
         .analysis {
             background-color: #fff;
         }
+        .analyze-button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            margin: 16px 0;
+            background-color: #1DA1F2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .analyze-button:disabled {
+            background-color: #a8d8f8;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
     <div id="content"></div>
+    <button id="analyze" class="analyze-button">Analyze with AI</button>
     <script src="popup.ts" type="module"></script>
 </body>
 </html>
