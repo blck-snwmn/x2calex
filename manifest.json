@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "X Post Viewer",
+  "version": "1.0",
+  "description": "View X posts in popup",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://twitter.com/*", "https://x.com/*"],
+      "js": ["src/content.ts"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "src/popup.html"
+  }
+}
