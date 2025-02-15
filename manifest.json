@@ -3,7 +3,7 @@
   "name": "X Post Viewer",
   "version": "1.0",
   "description": "View X posts in popup",
-  "permissions": ["activeTab"],
+  "permissions": ["activeTab", "storage"],
   "content_scripts": [
     {
       "matches": ["https://twitter.com/*", "https://x.com/*"],
@@ -11,9 +11,11 @@
     }
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
     "default_popup": "src/popup.html"
-  }
+  },
+  "options_page": "src/options.html"
 }

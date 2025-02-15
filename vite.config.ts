@@ -15,13 +15,17 @@ function chromeExtensionPlugin(): Plugin {
             manifest.content_scripts[0].js = ['content.js'];
             manifest.action.default_popup = 'popup.html';
             manifest.background.service_worker = 'background.js';
+            manifest.background.type = 'module';
+            manifest.options_page = 'options.html';
             fs.writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
-            // popup.html のコピーと更新
-            fs.copyFileSync('src/popup.html', path.join(outDir, 'popup.html'));
-            let popupHtml = fs.readFileSync(path.join(outDir, 'popup.html'), 'utf-8');
-            popupHtml = popupHtml.replace('popup.ts', 'popup.js');
-            fs.writeFileSync(path.join(outDir, 'popup.html'), popupHtml);
+            // HTML ファイルのコピーと更新
+            for (const file of ['popup.html', 'options.html']) {
+                fs.copyFileSync(`src/${file}`, path.join(outDir, file));
+                let html = fs.readFileSync(path.join(outDir, file), 'utf-8');
+                html = html.replace('.ts', '.js');
+                fs.writeFileSync(path.join(outDir, file), html);
+            }
         }
     };
 }
@@ -29,14 +33,19 @@ function chromeExtensionPlugin(): Plugin {
 export default defineConfig({
     build: {
         outDir: 'dist',
+        target: 'esnext',
         rollupOptions: {
             input: {
                 content: 'src/content.ts',
                 popup: 'src/popup.ts',
-                background: 'src/background.ts'
+                background: 'src/background.ts',
+                options: 'src/options.ts'
             },
             output: {
+                format: 'es',
                 entryFileNames: '[name].js',
+                chunkFileNames: '[name].[hash].js',
+                assetFileNames: '[name].[ext]'
             }
         },
     },
