@@ -8,7 +8,7 @@ function chromeExtensionPlugin(): Plugin {
         name: 'chrome-extension',
         closeBundle: async () => {
             const outDir = 'dist';
-            
+
             // manifest.json のコピーと更新
             fs.copyFileSync('manifest.json', path.join(outDir, 'manifest.json'));
             const manifest = JSON.parse(fs.readFileSync(path.join(outDir, 'manifest.json'), 'utf-8'));

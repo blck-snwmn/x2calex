@@ -20,11 +20,13 @@ chrome.runtime.onMessage.addListener(async (message: PostData, sender, sendRespo
 // popup からのメッセージを受け取る
 chrome.runtime.onConnect.addListener((port) => {
     if (port.name === 'popup') {
-        // 初期表示時に元の投稿内容を送信
+        // 初期表示時に保存した情報を送信
         if (savedMessage) {
             port.postMessage({
                 type: 'initial',
-                text: savedMessage.text
+                text: savedMessage.text,
+                url: savedMessage.url,
+                postedAt: savedMessage.postedAt
             });
         }
 
@@ -41,7 +43,8 @@ chrome.runtime.onConnect.addListener((port) => {
                     const analyzedData = await client.analyze(savedMessage.text);
                     port.postMessage({
                         type: 'analysis',
-                        result: analyzedData
+                        result: analyzedData,
+                        postedAt: savedMessage.postedAt
                     });
                 } catch (error) {
                     console.error('Error processing message:', error);
