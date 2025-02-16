@@ -21,11 +21,37 @@ function addButtonToPost(article: Element) {
     `;
 
     const postText = article.querySelector('[data-testid="tweetText"]')?.textContent || '';
-    const postUrl = window.location.origin + article.querySelector('time')?.parentElement?.getAttribute('href') || '';
 
-    // 投稿時間の取得
+    // time要素からISOString形式の日時を取得
     const timeElement = article.querySelector('time');
-    const postedAt = timeElement?.getAttribute('datetime') || new Date().toISOString();
+    let postedAt = '';
+
+    if (timeElement) {
+        // datetime属性から日時を取得（ISO 8601形式）
+        const datetime = timeElement.getAttribute('datetime');
+        if (datetime) {
+            try {
+                // 日時文字列の妥当性チェック
+                const date = new Date(datetime);
+                if (!isNaN(date.getTime())) {
+                    postedAt = date.toISOString();
+                } else {
+                    console.warn('Invalid datetime attribute:', datetime);
+                }
+            } catch (e) {
+                console.error('Error parsing datetime:', e);
+            }
+        }
+    }
+
+    // 日時が取得できなかった場合は現在時刻をフォールバックとして使用
+    if (!postedAt) {
+        postedAt = new Date().toISOString();
+        console.warn('Using current time as fallback for post timestamp');
+    }
+
+    // URLの取得（time要素の親のa要素のhref属性から）
+    const postUrl = window.location.origin + (timeElement?.closest('a')?.getAttribute('href') || '');
 
     button.addEventListener('click', () => {
         const data: PostData = {

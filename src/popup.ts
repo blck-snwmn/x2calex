@@ -25,6 +25,12 @@ let currentPostedAt = '';
 
 // 分析結果を表示する関数
 function displayAnalysis(analysis: OpenAIResponse) {
+    console.log('Analysis result:', {
+        dates: analysis.dates,
+        hasUntilExpression: analysis.hasUntilExpression,
+        postedAt: currentPostedAt
+    });
+
     const analysisDiv = document.createElement('div');
     analysisDiv.className = 'post analysis';
 
@@ -37,6 +43,8 @@ function displayAnalysis(analysis: OpenAIResponse) {
         analysis.hasUntilExpression,
         currentPostedAt
     );
+
+    console.log('Generated calendar link:', calendarLink);
 
     analysisDiv.innerHTML = `
         <h3>Analysis</h3>
@@ -97,6 +105,10 @@ port.onMessage.addListener((message: PopupMessage) => {
     switch (message.type) {
         case 'initial':
             if (message.text && message.url && message.postedAt) {
+                console.log('Received initial data:', {
+                    url: message.url,
+                    postedAt: message.postedAt
+                });
                 currentText = message.text;
                 currentUrl = message.url;
                 currentPostedAt = message.postedAt;
