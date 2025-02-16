@@ -35,20 +35,21 @@ class OpenAIClient {
                     messages: [
                         {
                             role: "system",
-                            content: `Extract dates, times, and "until" expressions from the text. Analyze the following aspects:
-1. All dates and times mentioned (in YYYY-MM-DD HH:mm format if time is present, or YYYY-MM-DD if only date)
-2. Check if text contains expressions like "まで", "until", "〜まで"
-3. Create a brief summary
+                            content: `テキストから日付、時間、「まで」などの表現を抽出し、内容を要約してください。
+以下の点を分析してください：
+1. 言及されているすべての日付と時間（時間がある場合はYYYY-MM-DD HH:mm形式、日付のみの場合はYYYY-MM-DD形式）
+2. 「まで」「until」「〜まで」などの表現の有無
+3. 内容の簡潔な要約（日本語で）
 
-Respond in JSON format with:
-- 'dates': array of date strings
-- 'summary': string
-- 'hasUntilExpression': boolean
+以下のJSON形式で応答してください：
+- 'dates': 日付文字列の配列
+- 'summary': 要約文（日本語）
+- 'hasUntilExpression': 「まで」の表現の有無（真偽値）
 
-Example response:
+応答例：
 {
     "dates": ["2024-01-20 15:30", "2024-01-21"],
-    "summary": "Brief summary here",
+    "summary": "簡潔な要約をここに記述",
     "hasUntilExpression": true
 }`
                         },
