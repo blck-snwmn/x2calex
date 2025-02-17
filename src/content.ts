@@ -34,7 +34,7 @@ function addButtonToPost(article: Element) {
 			try {
 				// 日時文字列の妥当性チェック
 				const date = new Date(datetime);
-				if (!isNaN(date.getTime())) {
+				if (!Number.isNaN(date.getTime())) {
 					postedAt = date.toISOString();
 				} else {
 					console.warn("Invalid datetime attribute:", datetime);

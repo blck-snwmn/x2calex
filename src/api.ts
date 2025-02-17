@@ -194,7 +194,7 @@ class OpenAIClient {
 
 		return {
 			dates: [...new Set(dates)], // 重複を除去
-			summary: content.length > 200 ? content.slice(0, 200) + "..." : content,
+			summary: content.length > 200 ? `${content.slice(0, 200)}...` : content,
 			hasUntilExpression,
 		};
 	}

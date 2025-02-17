@@ -3,7 +3,7 @@ import { OpenAIClient, type OpenAIResponse, type PostData } from "./api";
 let savedMessage: PostData | null = null;
 
 // エラーメッセージをフォーマットする関数
-function formatError(error: any): string {
+function formatError(error: Error | unknown): string {
 	if (error instanceof Error) {
 		return `${error.name}: ${error.message}`;
 	}

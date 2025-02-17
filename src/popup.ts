@@ -25,6 +25,8 @@ let currentPostedAt = "";
 
 // 分析結果を表示する関数
 function displayAnalysis(analysis: OpenAIResponse) {
+	if (!content) return;
+
 	console.log("Analysis result:", {
 		dates: analysis.dates,
 		hasUntilExpression: analysis.hasUntilExpression,
@@ -35,13 +37,12 @@ function displayAnalysis(analysis: OpenAIResponse) {
 	analysisDiv.className = "post analysis";
 
 	// カレンダーリンクを生成
-	const calendarLink = CalendarLinkGenerator.generateLink(
+	const calendarLink = CalendarLinkGenerator.generateUrl(
 		analysis.summary.split("\n")[0], // 1行目をタイトルとして使用
 		analysis.summary,
-		currentUrl,
 		analysis.dates,
-		analysis.hasUntilExpression,
 		currentPostedAt,
+		analysis.hasUntilExpression,
 	);
 
 	console.log("Generated calendar link:", calendarLink);
@@ -78,6 +79,8 @@ function displayAnalysis(analysis: OpenAIResponse) {
 
 // エラーメッセージを表示する関数
 function displayError(message: string) {
+	if (!content) return;
+
 	const errorDiv = document.createElement("div");
 	errorDiv.className = "post error";
 	errorDiv.innerHTML = `
@@ -94,6 +97,8 @@ function displayError(message: string) {
 
 // 元の投稿を表示する関数
 function displayOriginalPost(text: string) {
+	if (!content) return;
+
 	content.innerHTML = ""; // Clear previous content
 	const originalPost = document.createElement("div");
 	originalPost.className = "post original";
