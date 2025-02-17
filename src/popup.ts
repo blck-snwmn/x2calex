@@ -49,10 +49,11 @@ function displayAnalysis(analysis: OpenAIResponse) {
 
 	analysisDiv.innerHTML = `
         <div class="section-label">Dates Found</div>
-        ${analysis.dates.length > 0
-			? `<ul class="date-list">${analysis.dates.map((date) => `<li class="date-item">${date}</li>`).join("")}</ul>`
-			: `<div class="no-dates">No dates found</div>`
-		}
+        ${
+					analysis.dates.length > 0
+						? `<ul class="date-list">${analysis.dates.map((date) => `<li class="date-item">${date}</li>`).join("")}</ul>`
+						: `<div class="no-dates">No dates found</div>`
+				}
         ${analysis.hasUntilExpression ? '<div class="note">Using post time as start time (contains "until")</div>' : ""}
         <div class="section-label" style="margin-top: 6px;">Summary</div>
         <p class="summary-text">${analysis.summary}</p>
