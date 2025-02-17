@@ -48,25 +48,15 @@ function displayAnalysis(analysis: OpenAIResponse) {
 	console.log("Generated calendar link:", calendarLink);
 
 	analysisDiv.innerHTML = `
-        <h3>Analysis</h3>
-        <div class="dates">
-            <h4>Dates Found:</h4>
-            ${
-							analysis.dates.length > 0
-								? `<ul>${analysis.dates.map((date) => `<li>${date}</li>`).join("")}</ul>`
-								: "<p>No dates found</p>"
-						}
-            ${analysis.hasUntilExpression ? '<p><i>Contains "until" expression - using post time as start time</i></p>' : ""}
-        </div>
-        <div class="summary">
-            <h4>Summary:</h4>
-            <p>${analysis.summary}</p>
-        </div>
-        <div class="calendar-link">
-            <a href="${calendarLink}" target="_blank" class="calendar-button">
-                Add to Google Calendar
-            </a>
-        </div>
+        <div class="section-label">Dates Found</div>
+        ${analysis.dates.length > 0
+			? `<ul class="date-list">${analysis.dates.map((date) => `<li class="date-item">${date}</li>`).join("")}</ul>`
+			: `<div class="no-dates">No dates found</div>`
+		}
+        ${analysis.hasUntilExpression ? '<div class="note">Using post time as start time (contains "until")</div>' : ""}
+        <div class="section-label" style="margin-top: 6px;">Summary</div>
+        <p class="summary-text">${analysis.summary}</p>
+        <a href="${calendarLink}" target="_blank" class="calendar-button">Add to Google Calendar</a>
     `;
 
 	// 既存の分析結果を削除して新しい結果を追加
@@ -84,8 +74,8 @@ function displayError(message: string) {
 	const errorDiv = document.createElement("div");
 	errorDiv.className = "post error";
 	errorDiv.innerHTML = `
-        <h3>Error</h3>
-        <p>${message}</p>
+        <div class="section-label">Error</div>
+        <p class="summary-text">${message}</p>
     `;
 
 	const existingAnalysis = content.querySelector(".analysis");
@@ -99,10 +89,13 @@ function displayError(message: string) {
 function displayOriginalPost(text: string) {
 	if (!content) return;
 
-	content.innerHTML = ""; // Clear previous content
+	content.innerHTML = "";
 	const originalPost = document.createElement("div");
 	originalPost.className = "post original";
-	originalPost.innerHTML = `<h3>Original Post</h3><p>${text}</p>`;
+	originalPost.innerHTML = `
+        <div class="section-label">Original Post</div>
+        <p class="summary-text">${text}</p>
+    `;
 	content.appendChild(originalPost);
 }
 

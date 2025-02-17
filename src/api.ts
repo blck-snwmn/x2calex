@@ -20,7 +20,7 @@ interface DateTimeInfo {
 
 // OpenAI API 通信用のクラス
 class OpenAIClient {
-	constructor(private apiKey: string) {}
+	constructor(private apiKey: string) { }
 
 	async analyze(text: string): Promise<OpenAIResponse> {
 		try {
